@@ -1,0 +1,26 @@
+calculating values:
+
+D+:
+0.5402980985058647
+
+D-:
+0.540306513208133
+
+D0:
+0.5403023058569989
+
+exact:
+0.5403023058681398
+exp(-n):
+
+Part 2 - (np.finfo(abs(g1-f).dtype).eps):
+|D+ - cos(x)| :
+2.220446049250313e-16
+
+|D- - cos(x)| :
+2.220446049250313e-16
+
+|D0 - cos(x)| :
+2.220446049250313e-16
+
+Comparing this to the numbers calculated in part a,       we can see that the error present in our calculations       from using numpy's data type start to out weigh the error      from our calcultaions. Thus going to the precision of the       the final exp(-35) to exp(-40) is irrelevant because the increase      in accuracy is orders of magnitude smaller than the error from       the data type we store our answers in.
