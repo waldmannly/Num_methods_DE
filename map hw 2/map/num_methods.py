@@ -26,7 +26,7 @@ for eps in epsarr:
     #make A tridiagonal matrix
     k = np.array([(2 - 1/eps /n)* np.ones(n-1) ,-4*np.ones(n),(2 + 1/eps /n)*np.ones(n-1)])
     offset = [-1,0,1]
-    A = - 1* eps* n*n /2 * sp.diags(k,offset).toarray()
+    A =  1* eps* n*n /2 * sp.diags(k,offset).toarray()
     print("A:")
     print(A)
 
@@ -56,7 +56,7 @@ for eps in epsarr:
     #make A tridiagonal matrix
     k = np.array([(2- 1/eps /n)* np.ones(n-1) ,(-4 + 1/n/eps)*np.ones(n),(2)*np.ones(n-1)])
     offset = [-1,0,1]
-    A = -1* eps* n*n * sp.diags(k,offset).toarray()
+    A = 1* eps* n*n * sp.diags(k,offset).toarray()
     print("A:")
     print(A)
 
