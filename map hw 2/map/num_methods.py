@@ -65,7 +65,6 @@ for eps in epsarr:
     #make A tridiagonal matrix
     # k = np.array([(eps - h/2)* np.ones(n-1) ,-2*eps*np.ones(n),(eps + h/2)*np.ones(n-1)])
     k = np.array([  (eps - h)* np.ones(n-1) ,(-2*eps + h) *np.ones(n), (eps)*np.ones(n-1)])
-    # k = np.array([  (eps)* np.ones(n-1) ,(-2*eps+h) *np.ones(n), (eps - h)*np.ones(n-1)])
     offset = [-1,0,1]
     A =  - 1/(h*h) * sp.diags(k,offset).toarray()
     print("A:")
