@@ -1,6 +1,6 @@
 # Evan Waldmann
 # 2-13-19
-# 2.5 Homework
+# 2.4 Homework
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,11 +15,7 @@ h=1/(n)
 U= []
 Ainv =[]
 Anorm =[]
-tau =[]
 count =0
-
-print("part a")
-
 for eps in epsarr:
 
     # f and F vector
@@ -37,18 +33,18 @@ for eps in epsarr:
     # print(A)
 
     #solve system to get U
-    # U.append( spa.spsolve(A, F))
+    U.append( spa.spsolve(A, F))
     # print("U: ")
     # print(U[count])
 
-    # calculate the analytic solution
-    Uhat = (1- np.exp(-np.arange(0,1 , .01) / eps)) / (1- np.exp(-1/eps) )
-    #compute truncation error
-    tau.append( A @ Uhat - F)
+    #computing Ainverse and max norm
+    Ainv.append(spa.inv(- 1/h/h * sp.diags(k,offset)))
+    Anorm.append( spa.norm(Ainv[count], np.inf))
+
     print()
     print(eps)
-    print("truncation error")
-    print(tau[count])
+    print("inverse of A under infty norm")
+    print(Anorm[count])
 
     count = count + 1
 
@@ -68,11 +64,7 @@ print("Scheme from part b: ")
 U1= []
 A1inv =[]
 A1norm =[]
-tau1 = []
 count =0
-
-print("part b")
-
 for eps in epsarr:
     # f and F vector
     def f1(x):return 0
@@ -90,18 +82,18 @@ for eps in epsarr:
     # print(A)
 
     #solve system to get U
-    # U1.append( spa.spsolve(A, F1))
+    U1.append( spa.spsolve(A, F1))
     # print("U: ")
     # print(U1[count])
 
-    # calculate the analytic solution
-    Uhat = (1- np.exp(-np.arange(0,1 , .01) / eps)) / (1- np.exp(-1/eps) )
-    #compute truncation error
-    tau1.append( A @ Uhat - F)
+
+    #computing Ainverse and max norm
+    A1inv.append(spa.inv( - 1/(h*h) * sp.diags(k,offset)))
+    A1norm.append(spa.norm(A1inv[count], np.inf))
     print()
     print(eps)
-    print("truncation error")
-    print(tau1[count])
+    print("inverse of A under infty norm")
+    print(A1norm[count])
 
     count = count + 1
 

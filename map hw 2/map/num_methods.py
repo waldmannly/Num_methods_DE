@@ -58,13 +58,13 @@ for eps in epsarr:
     print(eps)
     def f1(x):return 0
     rg= np.arange(0.01,.99 , .01)
-    F1 = [(f1(0))]+ [f1(i) for i in rg ] + [f1(1)+ eps/(h*h) + 1/2/h]
+    F1 = [(f1(0))]+ [f1(i) for i in rg ] + [f1(1)+ eps/(h*h) + 1/h]
     print("F1: ")
     print(F1)
 
     #make A tridiagonal matrix
     # k = np.array([(eps - h/2)* np.ones(n-1) ,-2*eps*np.ones(n),(eps + h/2)*np.ones(n-1)])
-    k = np.array([  (eps - h)* np.ones(n-1) ,(-2*eps + h) *np.ones(n), (eps)*np.ones(n-1)])
+    k = np.array([ (eps) * np.ones(n-1) ,(-2*eps - h) *np.ones(n),  (eps + h)*np.ones(n-1)])
     offset = [-1,0,1]
     A =  - 1/(h*h) * sp.diags(k,offset).toarray()
     print("A:")
