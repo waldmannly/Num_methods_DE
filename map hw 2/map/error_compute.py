@@ -26,20 +26,11 @@ for eps in epsarr:
     def f(x):return 0
     rg= np.arange(0.01,.99 , .01)
     F = [(f(0))]+ [f(i) for i in rg ] + [f(1)+ eps/h/h+1/2/h]
-    # print("F: ")
-    # print(F)
 
     #make A tridiagonal matrix
     k = np.array([(eps - h/2)* np.ones(n-1) ,-2*eps*np.ones(n),(eps + h/2)*np.ones(n-1)])
     offset = [-1,0,1]
     A =  - 1/h/h * sp.diags(k,offset).toarray()
-    # print("A:")
-    # print(A)
-
-    #solve system to get U
-    # U.append( spa.spsolve(A, F))
-    # print("U: ")
-    # print(U[count])
 
     # calculate the analytic solution
     Uhat = (1- np.exp(-np.arange(0,1 , .01) / eps)) / (1- np.exp(-1/eps) )
@@ -52,15 +43,6 @@ for eps in epsarr:
 
     count = count + 1
 
-#plotting
-# plt.figure()
-# x =np.arange(0,1 , .01)
-# plt.plot(x, U[3], 'pink', lw=2, label='U b e-4')
-# plt.plot(x, U[2], 'g', lw=2, label='U b e-3')
-# plt.plot(x, U[1], 'r', lw=2, label='U b e-2')
-# plt.plot(x, U[0], 'b', lw=2, label='U b e-1')
-# plt.legend(loc='best')
-# plt.show()
 
 print("\n\n\n")
 print("Scheme from part b: ")
@@ -78,21 +60,12 @@ for eps in epsarr:
     def f1(x):return 0
     rg= np.arange(0.01,.99 , .01)
     F1 = [(f1(0))]+ [f1(i) for i in rg ] + [f1(1)+ eps/(h*h) + 1/h]
-    # print("F1: ")
-    # print(F1)
+
 
     #make A tridiagonal matrix
-    # k = np.array([(eps - h/2)* np.ones(n-1) ,-2*eps*np.ones(n),(eps + h/2)*np.ones(n-1)])
     k = np.array([ (eps) * np.ones(n-1) ,(-2*eps - h) *np.ones(n),  (eps + h)*np.ones(n-1)])
     offset = [-1,0,1]
     A =  - 1/(h*h) * sp.diags(k,offset).toarray()
-    # print("A:")
-    # print(A)
-
-    #solve system to get U
-    # U1.append( spa.spsolve(A, F1))
-    # print("U: ")
-    # print(U1[count])
 
     # calculate the analytic solution
     Uhat = (1- np.exp(-np.arange(0,1 , .01) / eps)) / (1- np.exp(-1/eps) )
@@ -104,12 +77,3 @@ for eps in epsarr:
     print(tau1[count])
 
     count = count + 1
-
-#plotting
-# plt.figure()
-# plt.plot(x, U1[3], 'pink', lw=2, label='U b e-4')
-# plt.plot(x, U1[2], 'g', lw=2, label='U b e-3')
-# plt.plot(x, U1[1], 'r', lw=2, label='U b e-2')
-# plt.plot(x, U1[0], 'b', lw=2, label='U b e-1')
-# plt.legend(loc='best')
-# plt.show()
