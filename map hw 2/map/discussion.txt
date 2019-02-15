@@ -1,0 +1,6 @@
+The bad local truncation error could either be from round off errors from the
+computation or from the bad discretization of the differential equation. From
+the results it appears that the truncation error is higher when the epsilon
+is larger, this is mostly likely due to the discretization of the problem,
+since the higher epsilon values make the DE reach its stable point more slowly.
+Additionally, it appears that the error corresponds to the order of the methods. 
