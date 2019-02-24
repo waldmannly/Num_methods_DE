@@ -91,11 +91,11 @@ for m in ms:
     offset = [-1,0,1]
     A = -1* n*n * sp.diags(k,offset).toarray()
 
-    F = [f0(i) for i in x]
+    F = [f(i) for i in x]
 
     #solve system to get U
     U= spa.spsolve(A, F)
-    exact0 = [u0(i) for i in x ]
+    exact0 = [u(i) for i in x ]
     P2.append(np.linalg.norm(U-exact0, np.inf))
 
     # fourth order
@@ -104,7 +104,7 @@ for m in ms:
     A = -1/12* n*n * sp.diags(k,offset).toarray()
 
     U= spa.spsolve(A, F)
-    exact = [u0(i) for i in x ]
+    exact = [u(i) for i in x ]
     P4.append(np.linalg.norm(U-exact, np.inf))
 
     count = count + 1
