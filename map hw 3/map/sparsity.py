@@ -9,19 +9,24 @@ import scipy.sparse.linalg as spa
 import math
 from scipy.sparse import csr_matrix
 import time
-
+from scipy.sparse import coo_matrix, block_diag
+np.set_printoptions(linewidth=132)
 # part 1
-n = 89*89
-n=120
+n=100
 h= 1/n
 k = np.array([np.ones(n-1),-2*np.ones(n),np.ones(n-1)]) #2nd order central
 offset = [-1,0,1]
 A = csr_matrix(-1* n*n * sp.diags(k,offset))
-#I =csr_matrix( np.eye(n))
-#S = sp.bmat([[A,I], [I,A]])
+I =csr_matrix( np.eye(n))
+
+S = sp.bmat([[A,I], [I,A]])
+sd = sp.diags(S, n=100)
+print(sd)
+
+print(S.toarray())
 
 # D = np.copy(A.todense())# I got a memory error beyond
-D = np.ones((n*n,n*n))
+D = np.ones((n,n))
 print(D)
 
 #part 2
