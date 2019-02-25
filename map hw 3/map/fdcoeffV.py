@@ -18,8 +18,15 @@ def fdcoeffV(k, xbar, x):
     c = sla.solve(A, b)
     return(np.transpose(c))
 
-n= 3
-x=np.arange(1,n+1)
+
+x=np.arange(-1,1+1)
 print(x)
-coef = fdcoeffV(2, 0,x) # evaluates the 2 derivative central difference.
+coef= fdcoeffV(2, 0,x) # evaluates the 2nd derivative central difference. (correctly)
 print(coef)
+
+print()
+
+x=np.arange(-2,2+1)
+print(x)
+coef4thorder = fdcoeffV(4, 0,x) # evaluates the 4th derivative central difference. (incorrectly)
+print(coef4thorder)
