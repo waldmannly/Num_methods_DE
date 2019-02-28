@@ -13,7 +13,7 @@ np.set_printoptions(linewidth=132)
 ################################################################################
 #       U0
 ################################################################################
-print("u0")
+# print("u0")
 def u0(x):return np.sin(math.pi * x)
 def f0(x):return ( math.pi* math.pi * np.sin(math.pi * x) )
 
@@ -21,8 +21,11 @@ ms = np.arange(10, 201, 10)
 P2= []
 P4= []
 for m in ms:
+    m= m
     h= 1/(m)
-    x =np.arange(0,1 , h)
+    x =np.arange(0,1+h , h)
+    x=np.copy(x[1:m])
+    m=m-1
 
     #make A tridiagonal matrix
     k = [1,-2,1]
@@ -34,7 +37,7 @@ for m in ms:
     #solve system to get U
     U2= sla.solve(A, F)
     exact = [u0(i) for i in x ]
-    P2.append(np.linalg.norm( A @ np.abs(U2-exact), np.inf))
+    P2.append(np.linalg.norm(  np.abs(U2-exact), np.inf))
 
     # fourth order
     offset = [-2,-1,0,1,2]
@@ -42,18 +45,18 @@ for m in ms:
     A4 =  (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m)).todense())
 
     U4= sla.solve(A4, F)
-    P4.append(np.linalg.norm( A4 @ np.abs(U4-exact), np.inf))
+    P4.append(np.linalg.norm(np.abs(U4-exact), np.inf))
+
+# plt.figure()
+# plt.plot(x, exact, "black", lw=3, label='exact')
+# plt.plot(x, U2, 'b', lw=2, label='U2')
+# plt.plot(x, U4, 'r', lw=2, label='U4')
+# plt.legend(loc='best')
+# plt.show()
 
 plt.figure()
-plt.plot(x, exact, "black", lw=3, label='exact')
-plt.plot(x, U2, 'b', lw=2, label='U2')
-plt.plot(x, U4, 'r', lw=2, label='U4')
-plt.legend(loc='best')
-plt.show()
-
-plt.figure()
-plt.loglog(1/ms, P2, 'b', lw=2, label='fd2')
-plt.loglog(1/ms, P4, 'r', lw=2, label='fd4')
+plt.loglog(ms, P2, 'b', lw=2, label='fd2')
+plt.loglog(ms, P4, 'r', lw=2, label='fd4')
 plt.title("Error of U0")
 plt.legend(loc='best')
 plt.show()
@@ -61,7 +64,7 @@ plt.show()
 ################################################################################
 #       U1
 ################################################################################
-print("u1")
+# print("u1")
 def u(x):
     if (x <= .05):
         return np.sin(math.pi * x)
@@ -79,8 +82,11 @@ P22= []
 P44= []
 
 for m in ms:
+    m= m
     h= 1/(m)
-    x =np.arange(0,1 , h)
+    x =np.arange(0,1+h , h)
+    x=np.copy(x[1:m])
+    m=m-1
 
     #make A tridiagonal matrix
     k = [1,-2,1]
@@ -102,12 +108,12 @@ for m in ms:
     U4= sla.solve(A4, F)
     P44.append(np.linalg.norm(A4 @ np.abs( U4-exact ), np.inf))
 
-plt.figure()
-plt.plot(x, exact, "black", lw=3, label='exact')
-plt.plot(x, U2, 'b', lw=2, label='U2')
-plt.plot(x, U4, 'r', lw=2, label='U4')
-plt.legend(loc='best')
-plt.show()
+# plt.figure()
+# plt.plot(x, exact, "black", lw=3, label='exact')
+# plt.plot(x, U2, 'b', lw=2, label='U2')
+# plt.plot(x, U4, 'r', lw=2, label='U4')
+# plt.legend(loc='best')
+# plt.show()
 
 plt.figure()
 plt.loglog(1/ms, P22, 'b', lw=2, label='fd2')
