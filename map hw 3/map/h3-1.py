@@ -5,9 +5,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.sparse as sp
-import scipy.sparse.linalg as spa
+import scipy.linalg as sla
 import math
-from scipy.sparse import csr_matrix
+
 
 np.set_printoptions(linewidth=132)
 ################################################################################
@@ -27,24 +27,21 @@ for m in ms:
     #make A tridiagonal matrix
     k = [1,-2,1]
     offset = [-1,0,1]
-    A = csr_matrix(-1/(h*h) * sp.diags(k,offset, (m,m)))
+    A = -1/(h*h) * sp.diags(k,offset, (m,m)).todense()
 
     F = [f0(i) for i in x]
 
     #solve system to get U
-    U2= spa.spsolve(A, F)
-    exact0 = [u0(i) for i in x ]
-    P2.append(np.linalg.norm( A @ np.abs(U2-exact0), np.inf))
+    U2= sla.solve(A, F)
+    exact = [u0(i) for i in x ]
+    P2.append(np.linalg.norm( A @ np.abs(U2-exact), np.inf))
 
     # fourth order
     offset = [-2,-1,0,1,2]
     diagonals = [-1,16,-30,16,-1]
-    A4 = csr_matrix( (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m))))
+    A4 =  (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m)).todense())
 
-    F1 = [f0(i) for i in x]
-
-    U4= spa.spsolve(A4, F1)
-    exact = [u0(i) for i in x ]
+    U4= sla.solve(A4, F)
     P4.append(np.linalg.norm( A4 @ np.abs(U4-exact), np.inf))
 
 plt.figure()
@@ -88,23 +85,22 @@ for m in ms:
     #make A tridiagonal matrix
     k = [1,-2,1]
     offset = [-1,0,1]
-    A2 = csr_matrix(-1/(h*h) * sp.diags(k,offset, (m,m)))
+    A2 = (-1/(h*h) * sp.diags(k,offset, (m,m)).todense())
 
     F = [f(i) for i in x]
 
     #solve system to get U
-    U2= spa.spsolve(A2, F)
-    exact0 = [u(i) for i in x ]
-    P22.append(np.linalg.norm(A2@np.abs(U2-exact0), np.inf))
+    U2= sla.solve(A2, F)
+    exact = [u(i) for i in x ]
+    P22.append(np.linalg.norm(A2 @ np.abs(U2-exact), np.inf))
 
     # fourth order
     offset = [-2,-1,0,1,2]
     diagonals = [-1,16,-30,16,-1]
-    A4 = csr_matrix( (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m))))
+    A4 = ( (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m))).todense())
 
-    U4= spa.spsolve(A4, F)
-    exact = [u(i) for i in x ]
-    P44.append(np.linalg.norm(A4 @np.abs( U4-exact ), np.inf))
+    U4= sla.solve(A4, F)
+    P44.append(np.linalg.norm(A4 @ np.abs( U4-exact ), np.inf))
 
 plt.figure()
 plt.plot(x, exact, "black", lw=3, label='exact')
