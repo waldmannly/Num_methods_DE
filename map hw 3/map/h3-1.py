@@ -7,79 +7,115 @@ import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spa
 import math
+from scipy.sparse import csr_matrix
 
 np.set_printoptions(linewidth=132)
-
-# set up functions
+################################################################################
+#       U0
+################################################################################
+print("u0")
 def u0(x):return np.sin(math.pi * x)
 def f0(x):return ( math.pi* math.pi * np.sin(math.pi * x) )
-def u1(x):
+
+ms = np.arange(10, 201, 10)
+P2= []
+P4= []
+for m in ms:
+    h= 1/(m)
+    x =np.arange(0,1 , h)
+
+    #make A tridiagonal matrix
+    k = [1,-2,1]
+    offset = [-1,0,1]
+    A = csr_matrix(-1/(h*h) * sp.diags(k,offset, (m,m)))
+
+    F = [f0(i) for i in x]
+
+    #solve system to get U
+    U2= spa.spsolve(A, F)
+    exact0 = [u0(i) for i in x ]
+    P2.append(np.linalg.norm( A @ np.abs(U2-exact0), np.inf))
+
+    # fourth order
+    offset = [-2,-1,0,1,2]
+    diagonals = [-1,16,-30,16,-1]
+    A4 = csr_matrix( (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m))))
+
+    F1 = [f0(i) for i in x]
+
+    U4= spa.spsolve(A4, F1)
+    exact = [u0(i) for i in x ]
+    P4.append(np.linalg.norm( A4 @ np.abs(U4-exact), np.inf))
+
+plt.figure()
+plt.plot(x, exact, "black", lw=3, label='exact')
+plt.plot(x, U2, 'b', lw=2, label='U2')
+plt.plot(x, U4, 'r', lw=2, label='U4')
+plt.legend(loc='best')
+plt.show()
+
+plt.figure()
+plt.loglog(1/ms, P2, 'b', lw=2, label='fd2')
+plt.loglog(1/ms, P4, 'r', lw=2, label='fd4')
+plt.title("Error of U0")
+plt.legend(loc='best')
+plt.show()
+
+################################################################################
+#       U1
+################################################################################
+print("u1")
+def u(x):
     if (x <= .05):
         return np.sin(math.pi * x)
     else:
         return 4*x*(1-x)
-def f1(x):
+
+def f(x):
     if (x > .5):
         return 8
     else:
         return ( math.pi* math.pi * np.sin(math.pi * x) )
 
 ms = np.arange(10, 201, 10)
-# P2/P4 will hold the max norms for 2md and 4th order respectively
-P2= []
-P4= []
-count =0
+P22= []
+P44= []
+
 for m in ms:
-    n = m
-    h= 1/(n)
+    h= 1/(m)
     x =np.arange(0,1 , h)
 
     #make A tridiagonal matrix
-    k = np.array([np.ones(n-1),-2*np.ones(n),np.ones(n-1)]) #2nd order central
+    k = [1,-2,1]
     offset = [-1,0,1]
-    a = -1* n*n * sp.diags(k,offset)
+    A2 = csr_matrix(-1/(h*h) * sp.diags(k,offset, (m,m)))
 
-    A= sp.bmat([[a if i==j else np.eye(n) if abs(i-j)==1
-                  else None for i in range(2)] for j in range(2)])
-
-    F = [f0(i) for i in x]+ [f1(i) for i in x]
-
-    # F[m-1] = F[m-1] + 1/h/h
-    # F[2*m-2]= F[2*m-2] + 1/h/h
+    F = [f(i) for i in x]
 
     #solve system to get U
-    U2= spa.spsolve(A, F)
-    exact0 = [u0(i) for i in x ] + [u1(i) for i in x]
-    P2.append(np.linalg.norm(U2-exact0, np.inf))
+    U2= spa.spsolve(A2, F)
+    exact0 = [u(i) for i in x ]
+    P22.append(np.linalg.norm(A2@np.abs(U2-exact0), np.inf))
 
     # fourth order
-    k = np.array([-1 *np.ones(n-2) , 16*np.ones(n-1) , -30*np.ones(n) ,16* np.ones(n-1) , -1*np.ones(n-2)]) # fourth order central
     offset = [-2,-1,0,1,2]
-    a = -1/12* n*n * sp.diags(k,offset)
+    diagonals = [-1,16,-30,16,-1]
+    A4 = csr_matrix( (-1/(12*h*h)) * (sp.diags(diagonals , offset,(m,m))))
 
-    A= sp.bmat([[a if i==j else np.eye(n) if abs(i-j)==1
-                      else None for i in range(2)] for j in range(2)])
-
-    # F[m-1] = F[m-1] + 1/h/h -1/h/2
-    # F[2*m-2]= F[2*m-2] + 1/h/h -1/h/2
-
-    U4= spa.spsolve(A, F)
-    exact = [u0(i) for i in x ]+ [u1(i) for i in x]
-    P4.append(np.linalg.norm(U4-exact, np.inf))
-
-    count = count + 1
-
+    U4= spa.spsolve(A4, F)
+    exact = [u(i) for i in x ]
+    P44.append(np.linalg.norm(A4 @np.abs( U4-exact ), np.inf))
 
 plt.figure()
-plt.plot(np.arange(0,2,h), exact, "black", lw=3, label='exact')
-plt.plot(np.arange(0,2 , h), U2, 'b', lw=2, label='U2')
-plt.plot(np.arange(0,2 , h), U4, 'r', lw=2, label='U4')
+plt.plot(x, exact, "black", lw=3, label='exact')
+plt.plot(x, U2, 'b', lw=2, label='U2')
+plt.plot(x, U4, 'r', lw=2, label='U4')
 plt.legend(loc='best')
 plt.show()
 
 plt.figure()
-plt.loglog(ms, P2, 'b', lw=2, label='fd2')
-plt.loglog(ms, P4, 'r', lw=2, label='fd4')
-plt.title("Errors")
+plt.loglog(1/ms, P22, 'b', lw=2, label='fd2')
+plt.loglog(1/ms, P44, 'r', lw=2, label='fd4')
+plt.title("Error of U1")
 plt.legend(loc='best')
 plt.show()
