@@ -1,0 +1,9 @@
+
+Size of S and D in megabytes, respectively:
+0.7691239999999999
+1171.28
+
+Sparse time :
+0.0009989738464355469
+Dense time :
+0.11686468124389648

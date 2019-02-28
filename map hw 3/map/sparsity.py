@@ -9,36 +9,39 @@ import scipy.sparse.linalg as spa
 import math
 from scipy.sparse import csr_matrix
 import time
+import scipy.sparse
 from scipy.sparse import coo_matrix, block_diag
 np.set_printoptions(linewidth=132)
+
 # part 1
-n=100
+n=110
 h= 1/n
-k = np.array([np.ones(n-1),-2*np.ones(n),np.ones(n-1)]) #2nd order central
+
 offset = [-1,0,1]
-A = csr_matrix(-1* n*n * sp.diags(k,offset))
-I =csr_matrix( np.eye(n))
+A = csr_matrix(-1* n*n * sp.diags([1,-4,1],offset, (n,n))  )
 
-S = sp.bmat([[A,I], [I,A]])
-sd = sp.diags(S, n=100)
-print(sd)
+S= csr_matrix(sp.bmat([[A if i==j else np.eye(n) if abs(i-j)==1
+              else None for i in range(n)] for j in range(n)]))
 
-print(S.toarray())
+# print(S)
 
-# D = np.copy(A.todense())# I got a memory error beyond
-D = np.ones((n,n))
-print(D)
+# D = np.copy(A.todense())# I got a memory error with this
+D = np.ones((n*n,n*n))
+# print(D)
+
+print()
 
 #part 2
-sizeA = (A.data.nbytes + A.indptr.nbytes + A.indices.nbytes )
-print("Size of A and D in megabytes, respectively: ")
-print(sizeA*1e-6)
+sizeS = (S.data.nbytes + S.indptr.nbytes + S.indices.nbytes )
+print("Size of S and D in megabytes, respectively: ")
+print(sizeS*1e-6)
 print(D.data.nbytes*1e-6)
 
+print()
 #part 3
-v = np.ones(n)
+v = np.ones(n*n)
 t1= time.time()
-a1= v@A
+a1= v@S
 t2= time.time()
 print("Sparse time :")
 print(t2-t1)
@@ -47,52 +50,3 @@ d1= v@D
 t4= time.time()
 print("Dense time :")
 print(t4-t3)
-
-# print()
-# print()
-# print()
-# # timing at different m's (part 4)
-# T1=[]
-# T2=[]
-# ms =  np.arange(10, 251, 10)
-# for m in ms :
-#     n = m
-#     h= 1/n
-#
-#     k = np.array([np.ones(n-1),-2*np.ones(n),np.ones(n-1)]) #2nd order central
-#     offset = [-1,0,1]
-#     A = csr_matrix(-1* n*n * sp.diags(k,offset))
-#     # print(A)
-#
-#     D = np.copy(A.todense())
-#     # print(D)
-#
-#     sizeA = (A.data.nbytes + A.indptr.nbytes + A.indices.nbytes )
-#
-#     print("Size of A and D in megabyte, respectively: ")
-#     print(sizeA*1e-6)
-#     print(D.data.nbytes*1e-6)
-#
-#
-#     v = np.ones(n)
-#     t1= time.time()
-#     for i in np.arange(1,10000):
-#         a1= v@A
-#     t2= time.time()
-#     print("Sparse time (for 10000 multiplications):")
-#     print(t2-t1)
-#     T1.append(t2-t1)
-#
-#     t3= time.time()
-#     for i in np.arange(1,10000):
-#         d1= v@D
-#     t4= time.time()
-#     print("Dense time (for 10000 multiplications):")
-#     print(t4-t3)
-#     T2.append(t4-t3)
-#
-# plt.figure()
-# plt.plot(ms, T1, 'b', lw=2, label='Sparse Time')
-# plt.plot(ms, T2, 'r', lw=2, label='Dense Time')
-# plt.legend(loc='best')
-# plt.show()
