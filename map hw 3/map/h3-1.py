@@ -55,8 +55,8 @@ for m in ms:
 # plt.show()
 
 plt.figure()
-plt.loglog(ms, P2, 'b', lw=2, label='fd2')
-plt.loglog(ms, P4, 'r', lw=2, label='fd4')
+plt.loglog(1/ms, P2, 'b', lw=2, label='fd2')
+plt.loglog(1/ms, P4, 'r', lw=2, label='fd4')
 plt.title("Error of U0")
 plt.legend(loc='best')
 plt.show()
