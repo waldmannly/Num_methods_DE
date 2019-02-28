@@ -31,20 +31,21 @@ P4= []
 count =0
 for m in ms:
     n = m
-    h= 1/n
+    h= 1/(n)
     x =np.arange(0,1 , h)
 
     #make A tridiagonal matrix
     k = np.array([np.ones(n-1),-2*np.ones(n),np.ones(n-1)]) #2nd order central
     offset = [-1,0,1]
     a = -1* n*n * sp.diags(k,offset)
-    I = np.eye(m)
-    # A = sp.bmat([[a, I],[I,a]]).todense()
 
     A= sp.bmat([[a if i==j else np.eye(n) if abs(i-j)==1
                   else None for i in range(2)] for j in range(2)])
 
     F = [f0(i) for i in x]+ [f1(i) for i in x]
+
+    # F[m-1] = F[m-1] + 1/h/h
+    # F[2*m-2]= F[2*m-2] + 1/h/h
 
     #solve system to get U
     U2= spa.spsolve(A, F)
@@ -56,9 +57,11 @@ for m in ms:
     offset = [-2,-1,0,1,2]
     a = -1/12* n*n * sp.diags(k,offset)
 
-    # A = sp.bmat([[a, I],[I,a]]).todense()
     A= sp.bmat([[a if i==j else np.eye(n) if abs(i-j)==1
                       else None for i in range(2)] for j in range(2)])
+
+    # F[m-1] = F[m-1] + 1/h/h -1/h/2
+    # F[2*m-2]= F[2*m-2] + 1/h/h -1/h/2
 
     U4= spa.spsolve(A, F)
     exact = [u0(i) for i in x ]+ [u1(i) for i in x]
@@ -66,7 +69,9 @@ for m in ms:
 
     count = count + 1
 
+
 plt.figure()
+plt.plot(np.arange(0,2,h), exact, "black", lw=3, label='exact')
 plt.plot(np.arange(0,2 , h), U2, 'b', lw=2, label='U2')
 plt.plot(np.arange(0,2 , h), U4, 'r', lw=2, label='U4')
 plt.legend(loc='best')
