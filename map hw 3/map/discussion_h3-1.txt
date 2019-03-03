@@ -1,0 +1,1 @@
+The result of the loglog plot for the fourth order method applied to f1 does not contradict theoretical convergence bounds because the piecewise function prevents h squared terms from cancelling out in the Taylor expansions. This lack of cancellation means that the error will be of order h squared for this fourth order method.  
