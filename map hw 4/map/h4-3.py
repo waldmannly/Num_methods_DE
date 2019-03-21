@@ -76,14 +76,16 @@ initialValue = np.zeros(m)
 
 #A U = RHS with U0 intial value
 val = step(initialValue , np.array(F) , 6, h, A2 )
-
+exact = sla.solve(A2,F)
 #graph solution
+
 plt.subplot(1,2,1)
+plt.plot(x, exact, label="exact")
 plt.plot(x, val[0])
 plt.title("u value plot")
 
 #log log error plot
-exact = sla.solve(A2,F)
+
 plt.subplot(1,2,2)
 plt.loglog(np.arange(0,63), exact)
 plt.title("error plot")
