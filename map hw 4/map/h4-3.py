@@ -35,7 +35,7 @@ def interpolateMidpoints(x):
 
 def step(U0, RHS, level,h, A):
     if level ==1: #base case
-        sla.solve(U0, RHS)
+        return U0 # not really sure what this is returning or why it is a concatination of a bunch of vectors (this is were you are supposed to solve a small system, but i could not figure that part out)
     else:
         k = [1,2,1]
         offset = [-1,0,1]
@@ -51,13 +51,13 @@ def step(U0, RHS, level,h, A):
         #step 4
         ce =  bookjac(cA, crv, 3, h)
         #step 5
-        e = np.array(interpolateMidpoints(ce))[0] # could get the I to work for me
+        e = np.array(interpolateMidpoints(ce))[0] # could not get the I to work for me
         print(e)
         uv = uv + np.array(e)
         #step 6 from class book
         #step 4 from the slang notes
         #return uv[0]
-        return step(uv, RHS, level-1, h,A)
+        return step(uv, RHS, level-1, h,A) # i know you are suposed to call the step function in step 4 but i couldn't figure that out
 
 
 m= 64
@@ -77,13 +77,15 @@ initialValue = np.zeros(m)
 #A U = RHS with U0 intial value
 val = step(initialValue , np.array(F) , 6, h, A2 )
 
-print("value 0 ")
-print(val[0])
-
-plt.figure()
-plt.plot(x, val[0])
-plt.show()
-
 #graph solution
+plt.subplot(1,2,1)
+plt.plot(x, val[0])
+plt.title("u value plot")
 
 #log log error plot
+exact = sla.solve(A2,F)
+plt.subplot(1,2,2)
+plt.loglog(np.arange(0,63), exact)
+plt.title("error plot")
+
+plt.show()
