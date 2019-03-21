@@ -32,7 +32,7 @@ for m in ms:
     #make A tridiagonal matrix
     k = [1,-2,1]
     offset = [-1,0,1]
-    A2 = (-1/(h*h) * sp.diags(k,offset, (m,m)).todense())
+    A2 = (1/(h*h) * sp.diags(k,offset, (m,m)).todense())
 
     F = [f(i) for i in x]
     F[0] = f(x[0]) - 1/h/h
@@ -53,70 +53,51 @@ plt.show()
 
 
 
-# 2 - jacobi
-def jacobi(A, b, x0, tol, maxiter=200):
-    n = A.shape[0]
-    x = x0.copy()
-    x_prev = x0.copy()
-    k = 0
-    rel_diff = tol * 2
-    while (rel_diff > tol) and (k < maxiter):
-        for i in range(0, n):
-            subs = 0.0
-            for j in range(0, n):
-                if i != j:
-                    subs += A[i,j] * x_prev[j]
-            x[i] = (b[i] - subs ) / A[i,i]
-        k += 1
-        rel_diff = norm(x - x_prev) / norm(x)
-        if k%2000 == 0:
-            print(x, rel_diff)
-        x_prev = x.copy()
-    return x, rel_diff, k
+
+
+def bookjac( F, uold, maxiter, m, h, x, exact):
+    norms = []
+    uold1 = uold
+    for iter in np.arange(0,maxiter):
+        unew=[]
+        unew.append(uold[0])
+        for i in np.arange(1, len(uold)-1):
+            unew.append( 0.25*(uold[i-1] + uold[i+1] + uold[i] + uold[i] - h*h  * F[i]))
+        unew.append(uold[len(uold)-1])
+        # print(unew)
+        uold = np.copy(unew)
+        if (iter% 100 == 0):
+            norms.append(norm( exact - uold, 2))
+        if (iter % 2000 == 0 ):
+            plt.plot(x, uold, label=str(iter))
+    return norms
 
 U=[]
 X =[]
+count = 0
 for m in ms:
     m= m
     h= 1/(m)
     x =np.arange(0,1+h , h)
+    p =np.arange(0,1+h , h)
     x=np.copy(x[1:m])
     X.append(x)
     m=m-1
 
-    #make A tridiagonal matrix
-    k = [1,-2,1]
-    offset = [-1,0,1]
-    A2 = (-1/(h*h) * sp.diags(k,offset, (m,m)).todense())
-
     F = [f(i) for i in x]
     F[0] = f(x[0]) - 1/h/h
     F[-1] = f(x[-1])  -1/h/h*3
-    #solve system to get U
-    U.append( jacobi(A2, F, x*2+1,.000001, 2000))
-print("here")
-print((U[2][0]))
 
-plt.figure()
-exact = [u(i) for i in x]
-plt.plot(x, exact, "black", lw=3, label='exact')
-plt.plot(X[0], U[0][0], 'b', lw=2, label='approximate m=25')
-plt.plot(X[1], U[1][0], 'r', lw=2, label='approximate m=50')
-plt.plot(X[2], U[2][0], 'pink', lw=2, label='approximate m=100')
-plt.suptitle('Jacobi method')
-plt.legend(loc='best')
-plt.show()
+    plt.subplot(1,2,1)
+    exact = [u(i) for i in x]
+    plt.plot(x, exact, "black", lw=3, label='exact')
+    U.append( bookjac(F, x*2+1, 20001, m,h,x, exact))
+    plt.legend(loc='upper left')
+    plt.suptitle('Jacobi method m= {}'.format(m+1))
 
-    # exact = [u(i) for i in x ]
-    # P22.append(np.linalg.norm(A2 @ np.abs(U2-exact), np.inf))
+    plt.subplot(1,2,2)
+    plt.plot(np.arange(0,20001, 100), U[count])
+    plt.suptitle('Jacobi errors m= {}'.format(m+1))
 
-    # I = np.arange(0, (m))
-    # # J = np.arange(, (m+1))
-    # U=np.zeros(m+1)
-    # newU= np.zeros(m+1)
-    # for iter in np.arange(0,maxiter):
-    #     for i in I:
-    #         newU[i] =  .5*(U[i-1] + U[i+1] - h*h* f(i))
-    #     U = newU
-
-# 3 - errors
+    plt.show()
+    count = count +1
