@@ -62,7 +62,7 @@ def bookjac( F, uold, maxiter, m, h, x, exact):
         unew=[]
         unew.append(uold[0])
         for i in np.arange(1, len(uold)-1):
-            unew.append( 0.25*(uold[i-1] + uold[i+1] + uold[i] + uold[i] - h*h  * F[i]))
+            unew.append( 0.5*(uold[i-1] + uold[i+1] + - h*h  * F[i]))
         unew.append(uold[len(uold)-1])
         # print(unew)
         uold = np.copy(unew)
