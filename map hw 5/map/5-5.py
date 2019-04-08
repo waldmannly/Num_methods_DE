@@ -26,7 +26,6 @@ def Improved_Euler_Method( y0,  x0,  h, steps , f) :
     return y000
 
 def classical_RK(y0,  x0,  h, steps, f):
-    h2 = 0.5 * h;
     steps = steps-1
     y000=[]
     while ( steps >= 0 ) :
