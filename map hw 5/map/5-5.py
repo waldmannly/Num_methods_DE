@@ -47,40 +47,55 @@ def getArraysFromList(y,n):
         l[t] = u
     return l
 
-n= 50
-x= 0
-h= 2*math.pi/n # (2pi -0) /n  length of the interval over the number of steps
-step= n
+# these will contain the values for part 2
+sEM =[]
+sIEM =[]
+sRK =[]
 
-y0 = np.array([1,0])
-def f(y):
-    return np.array([y[1], -y[0]])
+# part 1
+for n in np.arange(10,110, 10) :
+    x= 0
+    h= 2*math.pi/n # (2pi -0) /n  length of the interval over the number of steps
+    step= n
 
-yn1 = Euler_Method(y0,x,h,step, f)
-yn1 = getArraysFromList(yn1,n)
-print("Euler_Method:")
-print(yn1)
+    y0 = np.array([1,0])
+    def f(y):
+        return np.array([y[1], -y[0]])
 
-yn2 = Improved_Euler_Method(y0,x,h,step,f)
-yn2 = getArraysFromList(yn2,n)
-print("Improved_Euler_Method:")
-print(yn2)
+    yn1 = Euler_Method(y0,x,h,step, f)
+    yn1 = getArraysFromList(yn1,n)
+    sEM.append(yn1[0][n-1])
 
-yn3 = classical_RK(y0,x,h,step,f)
-yn3 = getArraysFromList(yn3,n)
-print("classical_RK:")
-print(yn3)
+    yn2 = Improved_Euler_Method(y0,x,h,step,f)
+    yn2 = getArraysFromList(yn2,n)
+    sIEM.append(yn2[0][n-1])
 
+    yn3 = classical_RK(y0,x,h,step,f)
+    yn3 = getArraysFromList(yn3,n)
+    sRK.append(yn3[0][n-1])
+
+# n= 100 is the last number of steps.
 plt.figure()
-plt.plot(np.linspace(0, 2*math.pi, n), yn1[0], label= 'Euler')
-plt.plot(np.linspace(0, 2*math.pi, n), yn2[0], label= 'Improved_Euler_Method')
-plt.plot(np.linspace(0, 2*math.pi, n), yn3[0], label = "RK ")
+plt.plot(np.linspace(0, 2*math.pi, n), yn1[0], label= 'y0 - Euler')
+plt.plot(np.linspace(0, 2*math.pi, n), yn2[0], label= 'y0 - Improved_Euler_Method',linewidth=4)
+plt.plot(np.linspace(0, 2*math.pi, n), yn3[0], label = "y0 - RK ",linewidth=2)
 plt.legend(loc='best')
+# plt.savefig("5-5-y0-solution-out.png")
 plt.show()
 
 plt.figure()
-plt.plot(np.linspace(0, 2*math.pi, n), yn1[1], label= 'Euler')
-plt.plot(np.linspace(0, 2*math.pi, n), yn2[1], label= 'Improved_Euler_Method')
-plt.plot(np.linspace(0, 2*math.pi, n), yn3[1], label = "RK ")
+plt.plot(np.linspace(0, 2*math.pi, n), yn1[1], label= 'y1 - Euler')
+plt.plot(np.linspace(0, 2*math.pi, n), yn2[1], label= 'y1 - Improved_Euler_Method',linewidth=4)
+plt.plot(np.linspace(0, 2*math.pi, n), yn3[1], label = "y1 - RK ",linewidth=2)
 plt.legend(loc='best')
+# plt.savefig("5-5-y1-solution-out.png")
+plt.show()
+
+#part 2 error plot
+plt.figure()
+plt.loglog(np.arange(10,110, 10), np.abs(sEM-np.cos(math.pi*2)), label="Euler at 2pi" )
+plt.loglog(np.arange(10,110, 10), np.abs(sIEM-np.cos(math.pi*2)), label="Improved Euler at 2pi" )
+plt.loglog(np.arange(10,110, 10), np.abs(sRK-np.cos(math.pi*2)), label="RK at 2pi" )
+plt.legend(loc='best')
+# plt.savefig("5-5-y0-error-out.png")
 plt.show()
