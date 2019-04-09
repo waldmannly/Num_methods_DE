@@ -64,7 +64,7 @@ for n in np.arange(10,110, 10) :
 
     yn1 = Euler_Method(y0,x,h,step, f)
     yn1 = getArraysFromList(yn1,n)
-    sEM.append(yn1[0][n-1])
+    sEM.append(yn1[0][n-1]) # steal the last value for each of the methods 
 
     yn2 = Improved_Euler_Method(y0,x,h,step,f)
     yn2 = getArraysFromList(yn2,n)
