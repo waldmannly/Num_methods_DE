@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-
 def Euler_Method( y0,  x0,  h, steps, f ):
     steps = steps -1
     y000=[]
@@ -14,11 +13,10 @@ def Euler_Method( y0,  x0,  h, steps, f ):
     return y000
 
 def Improved_Euler_Method( y0,  x0,  h, steps , f) :
-    h2 = 0.5 * h
     steps = steps -1
     y000=[]
     while ( steps >= 0 ):
-        k1 = h2 * f(y0)
+        k1 = 0.5*h  * f(y0)
         y0 = y0+  h * f( y0 + k1)
         x0 = x0+  h
         y000.append(y0)
@@ -64,7 +62,7 @@ for n in np.arange(10,110, 10) :
 
     yn1 = Euler_Method(y0,x,h,step, f)
     yn1 = getArraysFromList(yn1,n)
-    sEM.append(yn1[0][n-1]) # steal the last value for each of the methods 
+    sEM.append(yn1[0][n-1]) # steal the last value for each of the methods
 
     yn2 = Improved_Euler_Method(y0,x,h,step,f)
     yn2 = getArraysFromList(yn2,n)
