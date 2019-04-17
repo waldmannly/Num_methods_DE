@@ -26,6 +26,8 @@ def assemble(grid):
         unit vector `n` in horizontal direction.
 
     """
+    def f(x): return x
+
     print(grid)
     print(grid.points)
     print("grid h")
@@ -38,18 +40,26 @@ def assemble(grid):
     print(kthrow[0])
     print(grid.points[kthrow[0]]) # this is the x and y
 
+
+    print("loop start")
+    mat = np.zeros((len(grid.connect), 2))
+    F = np.zeros((len(grid.connect),2))
     # loop through the k rows of A
     for k in np.arange(0,len(grid.connect)) :
         rowK =grid.connect[k]
         lapcian = 4*grid.points[k] # 4 times current point
+        F[k] = f(grid.points[k])
         # then we loop from 0 to 3 for each direction
         for dir in [0,1,2,3]:
             # take the grid points of each of these directions
-            XYval = grid.points[rowK[dir]]
+            if(rowK[dir] != None):
+                XYval = grid.points[rowK[dir]]
             # make lapcian equation 4*current + 1* each other direction
             lapcian = lapcian + XYval
-        print(lapcian)
-
+        mat[k][0]= lapcian[0]
+        mat[k][1]= lapcian[1]
+    print("end loop")
+    print(mat)
     #the column number wherethe kth row of the A matrix... in the east direction? is given by the below
     # connect(k, east)
     #if none is in the connect then we are on the boundary
@@ -58,7 +68,8 @@ def assemble(grid):
 
     # f[9] - f(grid.points(9))
     # where gridpoints gives you the x and y values
-
+    print("F")
+    print(F)
 
     pass
 
