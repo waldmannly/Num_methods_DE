@@ -9,7 +9,7 @@ def assemble(grid):
 
     grid:
 
-        Defines a grid. Usually this grid is the return value of the function 
+        Defines a grid. Usually this grid is the return value of the function
         make_grid_heatsink in grid.py
 
     returns:
@@ -17,15 +17,26 @@ def assemble(grid):
         A Scipy sparse matrix A and a numpy vector F containing the matrix and
         right hand side of the spacial discretization.
 
-        Use a second order one-sided finite difference formula for the Neumann 
-        boundary conditions. For simplicity, at all upper corners we choose the 
-        outward normal `n` to be vertical. 
-        
-        At the lower right and left corner the Dirichlet and Neumann boundary 
+        Use a second order one-sided finite difference formula for the Neumann
+        boundary conditions. For simplicity, at all upper corners we choose the
+        outward normal `n` to be vertical.
+
+        At the lower right and left corner the Dirichlet and Neumann boundary
         conditions meet. Choose the Neumann conditions here, with an outward
         unit vector `n` in horizontal direction.
 
     """
+    print(grid)
+    print(grid.points)
+    #the column number wherethe kth row of the A matrix... in the east direction? is given by the below
+    # connect(k, east)
+    #if none is in the connect then we are on the boundary
+
+    # you give connect a point, k, and then a direction and it gives you the number of the point that you need
+
+    # f[9] - f(grid.points(9))
+    # where gridpoints gives you the x and y values
+
 
     pass
 
@@ -36,7 +47,7 @@ def heat_flux_south(grid, u):
 
     grid
 
-        Defines a grid. Usually this grid is the return value of the function 
+        Defines a grid. Usually this grid is the return value of the function
         make_grid_heatsink in grid.py
 
     u
@@ -87,3 +98,6 @@ class Trapezoid:
 
         """
         pass
+
+grid = make_grid_square(2)
+print(assemble(grid))

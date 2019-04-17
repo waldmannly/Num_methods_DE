@@ -18,7 +18,7 @@ class ProblemTests(unittest.TestCase):
 
         grid = make_grid_square(2)
         A, f = assemble(grid)
-        
+
         self.assertTrue(isinstance(A, sp.spmatrix))
 
 
@@ -53,10 +53,10 @@ class ProblemTests(unittest.TestCase):
         grid = make_grid_heatsink(3, 2)
         A, f = assemble(grid)
 
-        indices = [(0, 0), (0, 1), (0, 2), (4, 3), (4, 4), (4, 5), (4, 19), 
-                   (20, 5), (20, 19), (20, 20), (20, 21), (20, 35), (70, 54), 
+        indices = [(0, 0), (0, 1), (0, 2), (4, 3), (4, 4), (4, 5), (4, 19),
+                   (20, 5), (20, 19), (20, 20), (20, 21), (20, 35), (70, 54),
                    (70, 62), (70, 70)]
-  
+
         values = [24.0, -32.0, 8.0, -256.0, 1024.0, -256.0, -256.0, -256.0,
                   -256.0, 1024.0, -256.0, -256.0, 8.0, -32.0, 24.0]
 
