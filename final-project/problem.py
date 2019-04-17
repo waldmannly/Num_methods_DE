@@ -28,6 +28,28 @@ def assemble(grid):
     """
     print(grid)
     print(grid.points)
+    print("grid h")
+    print(grid.h)
+    print("grid connect ")
+    print(grid.connect)
+    k=1
+    kthrow = grid.connect[1]
+    print(kthrow)
+    print(kthrow[0])
+    print(grid.points[kthrow[0]]) # this is the x and y
+
+    # loop through the k rows of A
+    for k in np.arange(0,len(grid.connect)) :
+        rowK =grid.connect[k]
+        lapcian = 4*grid.points[k] # 4 times current point
+        # then we loop from 0 to 3 for each direction
+        for dir in [0,1,2,3]:
+            # take the grid points of each of these directions
+            XYval = grid.points[rowK[dir]]
+            # make lapcian equation 4*current + 1* each other direction
+            lapcian = lapcian + XYval
+        print(lapcian)
+
     #the column number wherethe kth row of the A matrix... in the east direction? is given by the below
     # connect(k, east)
     #if none is in the connect then we are on the boundary
