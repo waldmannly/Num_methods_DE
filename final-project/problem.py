@@ -26,7 +26,7 @@ def assemble(grid):
         unit vector `n` in horizontal direction.
 
     """
-    def f(x): return x
+    def f(x): return 0
 
     print(grid)
     print(grid.points)
@@ -43,23 +43,44 @@ def assemble(grid):
 
     print("loop start")
     mat = np.zeros((len(grid.connect), 2))
-    F = np.zeros((len(grid.connect),2))
+    F = np.zeros((len(grid.connect)))
     # loop through the k rows of A
     for k in np.arange(0,len(grid.connect)) :
         rowK =grid.connect[k]
-        lapcian = 4*grid.points[k] # 4 times current point
+        lapcian = -4*grid.points[k] # 4 times current point
         F[k] = f(grid.points[k])
         # then we loop from 0 to 3 for each direction
         for dir in [0,1,2,3]:
             # take the grid points of each of these directions
             if(rowK[dir] != None):
                 XYval = grid.points[rowK[dir]]
-            # make lapcian equation 4*current + 1* each other direction
-            lapcian = lapcian + XYval
+                # make lapcian equation 4*current + 1* each other direction
+                lapcian = lapcian + XYval
         mat[k][0]= lapcian[0]
         mat[k][1]= lapcian[1]
     print("end loop")
-    print(mat)
+    print(mat*4)
+
+    # for the unit cube..
+    print("trying the book way")
+    A = np.zeros((9,9))
+    F = np.zeros((len(grid.connect)))
+    for k in np.arange(0,len(grid.connect)) :
+        rowK =grid.connect[k]
+        A[k,k] = A[k,k] -4
+        for dir in [0,1,2,3]:
+            if(rowK[dir] != None):# if not none then fill in value
+                A[k,rowK[dir]] = A[k,rowK[dir]] +1
+            else:     # add in boundary conditions if none
+                if (dir == 2): # south boundary conditions
+                    F[k] = F[k] +1
+                else: # all other boundary conditions
+                    F[k] = F[k] - .5
+    print(  1/grid.h * A)
+
+
+
+
     #the column number wherethe kth row of the A matrix... in the east direction? is given by the below
     # connect(k, east)
     #if none is in the connect then we are on the boundary
