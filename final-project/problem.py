@@ -76,10 +76,41 @@ def assemble(grid):
                     F[k] = F[k] +1
                 else: # all other boundary conditions
                     F[k] = F[k] - .5
-    print(  1/grid.h * A)
+    print(  A)
 
 
+    print("adding in the project second order finite difference")
+    A = np.zeros((9,9))
+    F = np.zeros((len(grid.connect)))
+    for k in np.arange(0,len(grid.connect)) :
+        rowK =grid.connect[k]
+        A[k,k] = A[k,k] - 3/2
+        if (k+1 < len(grid.connect)):
+            A[k,k+1] = A[k,k+1] + 2
+        # else # add to F
+        if (k+2 < len(grid.connect)):
+            A[k,k+2] = A[k,k+2] - 1/2
+        # else # add to F
+    print(  A)
 
+    print("adding in the project second order finite difference")
+    A = np.zeros((9,9))
+    F = np.zeros((len(grid.connect)))
+    for k in np.arange(0,len(grid.connect)) :
+        rowK =grid.connect[k]
+        A[k,k] = A[k,k] - 3/2
+        if (k-1 >= 0):
+            A[k,k-1] = A[k,k-1] + 2
+        # else # add to F
+        if (k-2 >= 0):
+            A[k,k-2] = A[k,k-2] - 1/2
+        # else # add to F
+
+    print(  A)
+
+
+    # fourpointmethod = 1/12/h/h *(-1*U[j-2] + 16*U[j-1] - 30*U[j] + 16*U[j+1] - U[j-2])
+    # oneside2ndorderD = -3/2*U[j] +2*U[j+1] -1/2*U[j+2]
 
     #the column number wherethe kth row of the A matrix... in the east direction? is given by the below
     # connect(k, east)
