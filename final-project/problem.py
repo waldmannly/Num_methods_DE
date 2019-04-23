@@ -79,7 +79,7 @@ def assemble(grid):
     print(  A)
 
 
-    print("adding in the project second order finite difference")
+    print("adding in the project second order finite difference right side")
     A = np.zeros((9,9))
     F = np.zeros((len(grid.connect)))
     for k in np.arange(0,len(grid.connect)) :
@@ -93,7 +93,7 @@ def assemble(grid):
         # else # add to F
     print(  A)
 
-    print("adding in the project second order finite difference")
+    print("adding in the project second order finite difference left side")
     A = np.zeros((9,9))
     F = np.zeros((len(grid.connect)))
     for k in np.arange(0,len(grid.connect)) :
@@ -106,6 +106,26 @@ def assemble(grid):
             A[k,k-2] = A[k,k-2] - 1/2
         # else # add to F
 
+    print(  A)
+
+    print("adding in the project second order finite difference central finite")
+    A = np.zeros((9,9))
+    F = np.zeros((len(grid.connect)))
+    for k in np.arange(0,len(grid.connect)) :
+        rowK =grid.connect[k]
+        A[k,k] = A[k,k] - 30
+        if (k-1 >= 0):
+            A[k,k-1] = A[k,k-1] + 16
+        # else # add to F
+        if (k-2 >= 0):
+            A[k,k-2] = A[k,k-2] - 1
+        # else # add to F
+        if (k+1 < len(grid.connect)):
+            A[k,k+1] = A[k,k+1] + 16
+        # else # add to F
+        if (k+2 < len(grid.connect)):
+            A[k,k+2] = A[k,k+2] - 1
+        # else # add to F
     print(  A)
 
 
