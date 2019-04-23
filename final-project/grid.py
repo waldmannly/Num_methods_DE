@@ -26,17 +26,17 @@ def make_grid_square(level):
 
     grid.points = np.empty((n_points, 2))
     grid.connect = np.empty((n_points, 4), dtype=np.object)
-    
+
     def in_domain(i,j):
-    
+
         return (i>0) and (j>0)
-    
+
     i_point = 0
     for j in range(1, n):
-    
-        offset = n-1 
+
+        offset = n-1
         for i in range(1, n):
-            if in_domain(i,j): 
+            if in_domain(i,j):
                 grid.points[i_point] =[i*grid.h, j*grid.h]
                 make_connectivity(i, j, i_point, offset, in_domain, grid.connect)
                 i_point += 1
@@ -49,38 +49,38 @@ def make_grid_square(level):
 
 def make_grid_heatsink(level, n_fins):
     """
-    Makes a grid of points for the heat sink with 2**level-1 points in the 
-    vertical direction and n_fins fins on the top side. 
+    Makes a grid of points for the heat sink with 2**level-1 points in the
+    vertical direction and n_fins fins on the top side.
 
-    The return value 
+    The return value
 
         grid = make_grid_heatsink(...)
 
     contains three attributes:
 
         grid.h: scalar
-        
+
             The mesh size.
 
         grid.points: numpy array
 
-            Array of shape (n,2) for the x and y values of n grid points, 
+            Array of shape (n,2) for the x and y values of n grid points,
             so that e.g. grid.points[5,1] is the y value of the 5th point.
 
         grid.connect: numpy array
 
-            Array of shape (n,4) that describes the relative position of 
-            grid points. The first index is the number of the point and 
+            Array of shape (n,4) that describes the relative position of
+            grid points. The first index is the number of the point and
             the second one of four directions (0=north, 1=east, etc.
             as defined at the top of this file). The value is the index
-            of the point in the given direction. 
+            of the point in the given direction.
 
-            For example with 
+            For example with
 
-                i = grid.connect[5, north] 
+                i = grid.connect[5, north]
 
-            the point grid.point[i] is the first point north of 
-            grid.point[5]. If this point is outside of the domain, 
+            the point grid.point[i] is the first point north of
+            grid.point[5]. If this point is outside of the domain,
             i == None.
 
     """
@@ -92,19 +92,19 @@ def make_grid_heatsink(level, n_fins):
 
     grid.points = np.empty((n_points, 2))
     grid.connect = np.empty((n_points, 4), dtype=np.object)
-    
+
     def in_domain(i,j):
-    
+
         return not (j*grid.h >= 0.5*ny*grid.h and (i//(nx//n_fins)) % 2 == 0)\
                and (i>0)\
                and (j>0)
-    
+
     i_point = 0
     for j in range(1, ny):
-    
+
         offset = nx-1 if j <= ny//2 else nx//2
         for i in range(1, nx):
-            if in_domain(i,j): 
+            if in_domain(i,j):
                 grid.points[i_point] =[i*grid.h, j*grid.h]
                 make_connectivity(i, j, i_point, offset, in_domain, grid.connect)
                 i_point += 1
@@ -133,5 +133,3 @@ def triangulate(grid):
 
     triangles = np.asarray(triangles)
     return triangles
-
-        

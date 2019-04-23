@@ -7,7 +7,7 @@ import scipy.sparse.linalg
 import matplotlib.pyplot as plt
 from grid import make_grid_square, make_grid_heatsink
 from problem import assemble, heat_flux_south, Trapezoid
-from plot import plot_grid
+# from plot import plot_grid
 
 from contextlib import contextmanager
 

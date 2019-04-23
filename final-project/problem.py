@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.sparse as sp
 from grid import *
+import scipy.sparse.linalg as spa
+
 
 
 def assemble(grid):
@@ -26,110 +28,61 @@ def assemble(grid):
         unit vector `n` in horizontal direction.
 
     """
-    def f(x): return 0
 
-    print(grid)
-    print(grid.points)
-    print("grid h")
-    print(grid.h)
-    print("grid connect ")
-    print(grid.connect)
-    k=1
-    kthrow = grid.connect[1]
-    print(kthrow)
-    print(kthrow[0])
-    print(grid.points[kthrow[0]]) # this is the x and y
+    def testdirs(rowK):
+        for dir in [0,1,3,2]:
+            if(rowK[dir] == None):
+                return dir
+        return 100
 
-
-    print("loop start")
-    mat = np.zeros((len(grid.connect), 2))
-    F = np.zeros((len(grid.connect)))
-    # loop through the k rows of A
-    for k in np.arange(0,len(grid.connect)) :
-        rowK =grid.connect[k]
-        lapcian = -4*grid.points[k] # 4 times current point
-        F[k] = f(grid.points[k])
-        # then we loop from 0 to 3 for each direction
-        for dir in [0,1,2,3]:
-            # take the grid points of each of these directions
-            if(rowK[dir] != None):
-                XYval = grid.points[rowK[dir]]
-                # make lapcian equation 4*current + 1* each other direction
-                lapcian = lapcian + XYval
-        mat[k][0]= lapcian[0]
-        mat[k][1]= lapcian[1]
-    print("end loop")
-    print(mat*4)
-
-    # for the unit cube..
-    print("trying the book way")
-    A = np.zeros((9,9))
+    A = sp.lil_matrix((len(grid.connect),len(grid.connect)))
     F = np.zeros((len(grid.connect)))
     for k in np.arange(0,len(grid.connect)) :
         rowK =grid.connect[k]
-        A[k,k] = A[k,k] -4
-        for dir in [0,1,2,3]:
-            if(rowK[dir] != None):# if not none then fill in value
-                A[k,rowK[dir]] = A[k,rowK[dir]] +1
-            else:     # add in boundary conditions if none
-                if (dir == 2): # south boundary conditions
-                    F[k] = F[k] +1
-                else: # all other boundary conditions
-                    F[k] = F[k] - .5
-    print(  A)
+        d = testdirs(rowK)
+        F[k] = -.5;
+        if (d != 100): # dont use lapcian
+            #get which way we are pointing.
+            if (d == 0):
+                # go south twice
+                # print("south")
+                # print(rowK)
+                # print(rowK[2])
+                # print("south twice ")
+                # print( grid.connect[rowK[2]][2])
+                A[k,k] += -3/2
+                A[k, rowK[2] ] += 2
+                A[k, grid.connect[rowK[2]][2] ] += -1/2
+                # A[k,rowk[3]] += -1/2
+            elif (d == 1):
+                # go west twice
+                # print("west")
+                # print( grid.connect[rowK[3]][3])
+                A[k,k] += -3/2
+                A[k, rowK[3] ] += 2
+                A[k, grid.connect[rowK[3]][3] ] += -1/2
+            elif (d ==3):
+                # go east twice
+                # print("east")
+                # print( grid.connect[rowK[1]][1])
+                A[k,k] += -3/2
+                A[k, rowK[1] ] += 2
+                A[k, grid.connect[rowK[1]][1] ] += -1/2
+            else: # this should mean the only NONE is to the south
+                # this should just be the Dirichlet BC's
+                # print("D BC")
+                A[k,k] = A[k,k] -4* 1/grid.h
+                for dir in [0,1,3]:
+                    A[k,rowK[dir]] = A[k,rowK[dir]] +1* 1/grid.h
+                F[k] = 1/(grid.h*grid.h) *1
+        else :  # use lapcian
+            A[k,k] = A[k,k] -4* 1/grid.h
+            for dir in [0,1,2,3]:
+                A[k,rowK[dir]] = A[k,rowK[dir]] +1* 1/grid.h
+            F[k] = 0
 
+    # print(-A)
 
-    print("adding in the project second order finite difference right side")
-    A = np.zeros((9,9))
-    F = np.zeros((len(grid.connect)))
-    for k in np.arange(0,len(grid.connect)) :
-        rowK =grid.connect[k]
-        A[k,k] = A[k,k] - 3/2
-        if (k+1 < len(grid.connect)):
-            A[k,k+1] = A[k,k+1] + 2
-        # else # add to F
-        if (k+2 < len(grid.connect)):
-            A[k,k+2] = A[k,k+2] - 1/2
-        # else # add to F
-    print(  A)
-
-    print("adding in the project second order finite difference left side")
-    A = np.zeros((9,9))
-    F = np.zeros((len(grid.connect)))
-    for k in np.arange(0,len(grid.connect)) :
-        rowK =grid.connect[k]
-        A[k,k] = A[k,k] - 3/2
-        if (k-1 >= 0):
-            A[k,k-1] = A[k,k-1] + 2
-        # else # add to F
-        if (k-2 >= 0):
-            A[k,k-2] = A[k,k-2] - 1/2
-        # else # add to F
-
-    print(  A)
-
-    print("adding in the project second order finite difference central finite")
-    A = np.zeros((9,9))
-    F = np.zeros((len(grid.connect)))
-    for k in np.arange(0,len(grid.connect)) :
-        rowK =grid.connect[k]
-        A[k,k] = A[k,k] - 30
-        if (k-1 >= 0):
-            A[k,k-1] = A[k,k-1] + 16
-        # else # add to F
-        if (k-2 >= 0):
-            A[k,k-2] = A[k,k-2] - 1
-        # else # add to F
-        if (k+1 < len(grid.connect)):
-            A[k,k+1] = A[k,k+1] + 16
-        # else # add to F
-        if (k+2 < len(grid.connect)):
-            A[k,k+2] = A[k,k+2] - 1
-        # else # add to F
-    print(  A)
-
-
-    # fourpointmethod = 1/12/h/h *(-1*U[j-2] + 16*U[j-1] - 30*U[j] + 16*U[j+1] - U[j-2])
     # oneside2ndorderD = -3/2*U[j] +2*U[j+1] -1/2*U[j+2]
 
     #the column number wherethe kth row of the A matrix... in the east direction? is given by the below
@@ -138,12 +91,7 @@ def assemble(grid):
 
     # you give connect a point, k, and then a direction and it gives you the number of the point that you need
 
-    # f[9] - f(grid.points(9))
-    # where gridpoints gives you the x and y values
-    print("F")
-    print(F)
-
-    pass
+    return ((-1/grid.h * A) , F)
 
 
 def heat_flux_south(grid, u):
@@ -164,7 +112,41 @@ def heat_flux_south(grid, u):
         The heat flux through the southern boundary, a scalar.
 
     """
-    pass
+    def testdirs(rowK):
+        for dir in [0,1,3,2]:
+            if(rowK[dir] == None):
+                return dir
+        return 100
+
+    gammaD =[]
+    for k in np.arange(0,len(grid.connect)):
+        d =testdirs(grid.connect[k])
+        if (d == 2):
+            gammaD.append(k)
+
+    print(gammaD)
+    # print(len(u))
+    # print(len(grid.connect))
+    def printpath(k, count=0, sum=0):
+        if (k == None):
+            print("sum")
+            print(sum/count)
+            return sum/count
+        sum += u[k]
+        if (count == 0):
+            print("print path")
+        print(k)
+        printpath(grid.connect[k][0],count+1, sum)
+
+    sum=0
+    sum2 =0
+    for k in gammaD:
+        sum2 = printpath(k)
+        sum = sum + 1/grid.h * (- 3/2*u[k] +2*u[grid.connect[k][0]] -1/2*u[grid.connect[grid.connect[k][0]][0]])
+
+    print(sum2)
+    print(grid.h* sum)
+    return  grid.h* sum
 
 
 class Trapezoid:
@@ -186,6 +168,9 @@ class Trapezoid:
             Time step size of the trapezoid method.
 
         """
+        self.A =A
+        self.F = F
+        self.dt = dt
         pass
 
     def step(self, U):
@@ -202,7 +187,26 @@ class Trapezoid:
 
 
         """
-        pass
 
-grid = make_grid_square(2)
-print(assemble(grid))
+        newU = U + .5*self.dt * ( U + spa.spsolve(self.A, self.F))
+
+        return newU;
+
+# grid = make_grid_heatsink(3, 2)
+# A, f = assemble(grid)
+#
+# u = grid.points[:,1]
+# heat_flux_south(grid, u)
+
+grid = make_grid_heatsink(3, 2)
+A, f = assemble(grid)
+
+u = grid.points[:,1]
+heat_flux_south(grid, u)
+
+A = sp.csc_matrix(np.array([3.0]))
+f = sp.csc_matrix(np.array([4.0]))
+u = sp.csc_matrix(np.array([7.0]))
+trapezoid = Trapezoid(A, f, dt=0.5)
+
+print(trapezoid.step(u)[0])
