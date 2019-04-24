@@ -3,8 +3,6 @@ import scipy.sparse as sp
 from grid import *
 import scipy.sparse.linalg as spa
 
-
-
 def assemble(grid):
     """
     Assembles the matrix A and right hand side F for the spacial discreization
@@ -45,32 +43,22 @@ def assemble(grid):
             #get which way we are pointing.
             if (d == 0):
                 # go south twice
-                # print("south")
-                # print(rowK)
-                # print(rowK[2])
-                # print("south twice ")
-                # print( grid.connect[rowK[2]][2])
                 A[k,k] += -3/2
                 A[k, rowK[2] ] += 2
                 A[k, grid.connect[rowK[2]][2] ] += -1/2
                 # A[k,rowk[3]] += -1/2
             elif (d == 1):
                 # go west twice
-                # print("west")
-                # print( grid.connect[rowK[3]][3])
                 A[k,k] += -3/2
                 A[k, rowK[3] ] += 2
                 A[k, grid.connect[rowK[3]][3] ] += -1/2
             elif (d ==3):
                 # go east twice
-                # print("east")
-                # print( grid.connect[rowK[1]][1])
                 A[k,k] += -3/2
                 A[k, rowK[1] ] += 2
                 A[k, grid.connect[rowK[1]][1] ] += -1/2
             else: # this should mean the only NONE is to the south
                 # this should just be the Dirichlet BC's
-                # print("D BC")
                 A[k,k] = A[k,k] -4* 1/grid.h
                 for dir in [0,1,3]:
                     A[k,rowK[dir]] = A[k,rowK[dir]] +1* 1/grid.h
@@ -127,6 +115,8 @@ def heat_flux_south(grid, u):
     print(gammaD)
     # print(len(u))
     # print(len(grid.connect))
+
+    ngd =[]
     def printpath(k, count=0, sum=0):
         if (k == None):
             print("sum")
@@ -136,8 +126,11 @@ def heat_flux_south(grid, u):
         if (count == 0):
             print("print path")
         print(k)
+        ngd.append(k)
         printpath(grid.connect[k][0],count+1, sum)
 
+    print("ngd")
+    print(ngd)
     sum=0
     sum2 =0
     for k in gammaD:
@@ -146,6 +139,13 @@ def heat_flux_south(grid, u):
 
     print(sum2)
     print(grid.h* sum)
+    print(ngd)
+
+    sum=0
+    # for k in ngd:
+    #     sum = sum +  1/grid.h* (- 3/2*u[k] +2*u[grid.connect[k][0]] -1/2*u[grid.connect[grid.connect[k][0]][0]])
+    # print("new sum")
+    # print(grid.h* sum)
     return  grid.h* sum
 
 
@@ -188,20 +188,25 @@ class Trapezoid:
 
         """
 
-        newU = U + .5*self.dt * ( U + spa.spsolve(self.A, self.F))
+        def f(y0): return self.A@y0 + self.F
 
-        return newU;
+        print(U)
 
-# grid = make_grid_heatsink(3, 2)
-# A, f = assemble(grid)
-#
-# u = grid.points[:,1]
-# heat_flux_south(grid, u)
+        print("f(u)")
+        print(f(U))
+
+        k1 = 0.5 * self.dt * f(U)
+        newU = U +  self.dt*f( U + k1)
+
+        return newU
+
 
 grid = make_grid_heatsink(3, 2)
 A, f = assemble(grid)
 
 u = grid.points[:,1]
+print("grid points")
+print(grid.points)
 heat_flux_south(grid, u)
 
 A = sp.csc_matrix(np.array([3.0]))
