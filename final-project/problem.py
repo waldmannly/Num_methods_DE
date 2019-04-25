@@ -100,53 +100,16 @@ def heat_flux_south(grid, u):
         The heat flux through the southern boundary, a scalar.
 
     """
-    def testdirs(rowK):
-        for dir in [0,1,3,2]:
-            if(rowK[dir] == None):
-                return dir
-        return 100
+
 
     gammaD =[]
     for k in np.arange(0,len(grid.connect)):
-        d =testdirs(grid.connect[k])
-        if (d == 2):
+        if (grid.connect[k][2] == None):
             gammaD.append(k)
-
-    print(gammaD)
-    # print(len(u))
-    # print(len(grid.connect))
-
-    ngd =[]
-    def printpath(k, count=0, sum=0):
-        if (k == None):
-            print("sum")
-            print(sum/count)
-            return sum/count
-        sum += u[k]
-        if (count == 0):
-            print("print path")
-        print(k)
-        ngd.append(k)
-        printpath(grid.connect[k][0],count+1, sum)
-
-    print("ngd")
-    print(ngd)
     sum=0
-    sum2 =0
     for k in gammaD:
-        sum2 = printpath(k)
-        sum = sum + 1/grid.h * (- 3/2*u[k] +2*u[grid.connect[k][0]] -1/2*u[grid.connect[grid.connect[k][0]][0]])
-
-    print(sum2)
-    print(grid.h* sum)
-    print(ngd)
-
-    sum=0
-    # for k in ngd:
-    #     sum = sum +  1/grid.h* (- 3/2*u[k] +2*u[grid.connect[k][0]] -1/2*u[grid.connect[grid.connect[k][0]][0]])
-    # print("new sum")
-    # print(grid.h* sum)
-    return  grid.h* sum
+        sum = sum + -1*(- 3/2*u[k] +2*u[grid.connect[k][0]] -1/2*u[grid.connect[grid.connect[k][0]][0]])
+    return sum
 
 
 class Trapezoid:
@@ -188,30 +151,7 @@ class Trapezoid:
 
         """
 
-        def f(y0): return self.A@y0 + self.F
+        RHS = U + self.dt/2*(self.F - self.A@U + self.F )
+        solved = spa.spsolve(sp.eye((self.A).shape[0],(self.A).shape[1]) + self.dt/2* self.A, RHS )
 
-        print(U)
-
-        print("f(u)")
-        print(f(U))
-
-        k1 = 0.5 * self.dt * f(U)
-        newU = U +  self.dt*f( U + k1)
-
-        return newU
-
-
-grid = make_grid_heatsink(3, 2)
-A, f = assemble(grid)
-
-u = grid.points[:,1]
-print("grid points")
-print(grid.points)
-heat_flux_south(grid, u)
-
-A = sp.csc_matrix(np.array([3.0]))
-f = sp.csc_matrix(np.array([4.0]))
-u = sp.csc_matrix(np.array([7.0]))
-trapezoid = Trapezoid(A, f, dt=0.5)
-
-print(trapezoid.step(u)[0])
+        return solved
