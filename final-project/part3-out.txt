@@ -1,0 +1,8 @@
+heat flux 2 fins
+0.9491699039414172
+                                                                                                    
+heat flux 4 fins
+1.2089718090809805
+
+heat flux 8 fins
+1.7386854544558257

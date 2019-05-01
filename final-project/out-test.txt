@@ -1,0 +1,15 @@
+
+Fingerprint: 75b4901da040a24d37a049e5247321b8
+
+test_assemble_heatsink_matrix (__main__.ProblemTests) ... ok
+test_assemble_heatsink_rhs (__main__.ProblemTests) ... ok
+test_assemble_square_matrix (__main__.ProblemTests) ... ok
+test_assemble_square_rhs (__main__.ProblemTests) ... ok
+test_heat_flux_south (__main__.ProblemTests) ... ok
+test_sparse (__main__.ProblemTests) ... ok
+test_trapezoid (__main__.ProblemTests) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.019s
+
+OK
