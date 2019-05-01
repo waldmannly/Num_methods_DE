@@ -134,6 +134,7 @@ class Trapezoid:
         self.A =A
         self.F = F
         self.dt = dt
+        self.left =  sp.eye((self.A).shape[0],(self.A).shape[1]) + self.dt/2* self.A
         pass
 
     def step(self, U):
@@ -150,8 +151,7 @@ class Trapezoid:
 
 
         """
-
         RHS = U + self.dt/2*(self.F - self.A@U + self.F )
-        solved = spa.spsolve(sp.eye((self.A).shape[0],(self.A).shape[1]) + self.dt/2* self.A, RHS )
+        solved = spa.spsolve( self.left, RHS )
 
         return solved

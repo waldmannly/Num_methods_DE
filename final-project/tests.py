@@ -11,7 +11,6 @@ from problem import assemble, heat_flux_south, Trapezoid
 
 from contextlib import contextmanager
 
-
 class ProblemTests(unittest.TestCase):
 
     def test_sparse(self):

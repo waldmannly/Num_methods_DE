@@ -34,7 +34,7 @@ for i in [2,4,8]:
     for x in np.arange(0,100):
         val = trapezoid.step( val )
         steps.append( heat_flux_south(grid,val ))
-    plt.figure()
-    plt.plot(np.arange(0,100), steps)
-    plt.title(i)
-    plt.show()
+    # plt.figure()
+    # plt.plot(np.arange(0,100), steps)
+    # plt.title(i)
+    # plt.show()
